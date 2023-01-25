@@ -9,6 +9,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -104,39 +105,79 @@ public class ControllerGender {
 		
 	}
 	
+	
+
+	
+	
 	//-- Find by id
-	@GetMapping(path = "find/{id}")
-	public ResponseEntity<?> findById(@PathVariable(value = "id") Integer id){
-		
-		try {
+		@GetMapping(path = "find/{id}")
+		public ResponseEntity<?> findById(@PathVariable(value = "id") Integer id){
 			
-			
-			//-- validar id
-			if (id<0) {
-				this.dtoResponseGender=new DtoResponseGender(null, false, "El id tiene que ser mayor a 0");
+			try {
+				
+				
+				//-- validar id
+				if (id<0) {
+					this.dtoResponseGender=new DtoResponseGender(null, false, "El id tiene que ser mayor a 0");
+					return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				
+				//-- Realizar consulta
+				this.entityGender=this.servicesGender.findById(id);
+				if (this.entityGender==null) {
+					this.dtoResponseGender=new DtoResponseGender(null, false, "No existe el gender");
+					return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				
+				//-- Enviar respuesta
+				return new ResponseEntity<EntityGender>(this.entityGender,HttpStatus.OK);
+				
+			} catch (Exception e) {
+				this.dtoResponseGender=new DtoResponseGender(null, false, e.getMessage());
 				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
-			
-			//-- Realizar consulta
-			this.entityGender=this.servicesGender.findById(id);
-			if (this.entityGender==null) {
-				this.dtoResponseGender=new DtoResponseGender(null, false, "No existe el gender");
-				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			
-			
-			//-- Enviar respuesta
-			return new ResponseEntity<EntityGender>(this.entityGender,HttpStatus.OK);
-			
-		} catch (Exception e) {
-			this.dtoResponseGender=new DtoResponseGender(null, false, e.getMessage());
-			return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		
-	}
-	
+		//-- Delete by id
+		@DeleteMapping(path = "delete/{id}")
+		public ResponseEntity<?> deleteById(@PathVariable(value = "id") Integer id){
+			
+			try {
+				
+				
+				//-- validar id
+				if (id<0) {
+					this.dtoResponseGender=new DtoResponseGender(null, false, "El id tiene que ser mayor a 0");
+					return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				
+				//-- Realizar consulta
+				this.entityGender=this.servicesGender.findById(id);
+				if (this.entityGender==null) {
+					this.dtoResponseGender=new DtoResponseGender(null, false, "No existe el gender");
+					return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				
+				//-- Enviar respuesta
+				this.servicesGender.deleteById(id);
+				this.dtoResponseGender=new DtoResponseGender(id, true,null);
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.OK);
+				
+				
+			} catch (Exception e) {
+				this.dtoResponseGender=new DtoResponseGender(null, false, e.getMessage());
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+		}
+			
 	
 	
 	
