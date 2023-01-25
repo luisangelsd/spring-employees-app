@@ -5,9 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -100,6 +103,41 @@ public class ControllerGender {
 		}
 		
 	}
+	
+	//-- Find by id
+	@GetMapping(path = "find/{id}")
+	public ResponseEntity<?> findById(@PathVariable(value = "id") Integer id){
+		
+		try {
+			
+			
+			//-- validar id
+			if (id<0) {
+				this.dtoResponseGender=new DtoResponseGender(null, false, "El id tiene que ser mayor a 0");
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- Realizar consulta
+			this.entityGender=this.servicesGender.findById(id);
+			if (this.entityGender==null) {
+				this.dtoResponseGender=new DtoResponseGender(null, false, "No existe el gender");
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- Enviar respuesta
+			return new ResponseEntity<EntityGender>(this.entityGender,HttpStatus.OK);
+			
+		} catch (Exception e) {
+			this.dtoResponseGender=new DtoResponseGender(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		
+	}
+	
+	
 	
 	
 
