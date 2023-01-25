@@ -28,9 +28,9 @@ public class ControllerJob {
 
 	
 	//-- Variables globales
-	EntityJob entityJob;
-	List<EntityJob> listEntityJob;
-	DtoResponseJob dtoResponseJob;;
+	EntityJob entityJob=null;
+	List<EntityJob> listEntityJob=null;
+	DtoResponseJob dtoResponseJob=null;
 	
 	
 	//-- Servicios
@@ -72,9 +72,44 @@ public class ControllerJob {
 	
 	
 	//-- Editar
-	@PutMapping(path = "update/"){
+	@PutMapping(path = "update")
+	public ResponseEntity<?> update(@Valid @RequestBody(required = true) EntityJob entityJob, BindingResult result){
 		
+	
+		try {
+			
+			//-- Validar info
+			if (result.hasErrors()) {
+				this.dtoResponseJob=new DtoResponseJob(null, false, "Asegurate de enviar todos los campos");
+				return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//-- validar si existe job a editar
+			this.entityJob=this.servicesJob.findById(entityJob.getId());
+			if (this.entityJob==null) {
+				this.dtoResponseJob=new DtoResponseJob(null, false, "El Job no existe");
+				return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//-- Editar
+			this.entityJob=this.servicesJob.saveUpdate(entityJob);
+			
+			//-- Regresar respuesta
+			this.dtoResponseJob=new DtoResponseJob(this.entityJob.getId(), true, null);
+			return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.OK);
+			
+			
+		} catch (Exception e) {
+			this.dtoResponseJob=new DtoResponseJob(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	
 	}
+	
+	
+	
+	
 	
 	
 }
