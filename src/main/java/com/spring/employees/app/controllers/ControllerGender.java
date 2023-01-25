@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,6 +64,43 @@ public class ControllerGender {
 		}
 		
 	}
+	
+	//-- Update
+	@PutMapping("update")
+	public ResponseEntity update(@Valid @RequestBody(required = true) EntityGender entityGender, BindingResult result) {
+		
+		try {
+			
+			//-- Validar Request
+			if (result.hasErrors() || entityGender.getId()==null || entityGender.getId()<0 ) {
+				this.dtoResponseGender=new DtoResponseGender(null, false,"Asegurate de enviar todos los parametros");
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- Verificar que exista el gender
+			this.entityGender=this.servicesGender.findById(entityGender.getId());
+			if (this.entityGender==null) {
+				this.dtoResponseGender=new DtoResponseGender(null, false, "No existe en Gender");
+				return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- Realizar consulta
+			this.entityGender=this.servicesGender.saveUpdate(entityGender);
+			
+			
+			//-- Regresar respuesta
+			this.dtoResponseGender=new DtoResponseGender(this.entityGender.getId(), true, null);
+			return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.OK);
+
+		} catch (Exception e) {
+			this.dtoResponseGender=new DtoResponseGender(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseGender>(this.dtoResponseGender,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
 	
 
 }
