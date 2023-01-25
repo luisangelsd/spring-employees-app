@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -112,7 +113,7 @@ public class ControllerJob {
 	}
 	
 	
-	//-- Eliminar
+	//-- Eliminar por id
 	@DeleteMapping(path = "delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable(value = "id") Integer id){
 		
@@ -146,6 +147,39 @@ public class ControllerJob {
 	}
 	
 	
+	//-- Buscar por id
+	@GetMapping(path = "find/{id}")
+	public ResponseEntity<?> findById(@PathVariable(name = "id") Integer id){
+		
+		try {
+			
+			//-- validar el id
+			if (id<0) {
+				this.dtoResponseJob=new DtoResponseJob(null, false, "El id no puede ser nulo o ser menor a 0");
+				return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//-- Realizar consulta y validar
+			this.entityJob=this.servicesJob.findById(id);
+			
+			if (this.entityJob==null) {
+				this.dtoResponseJob=new DtoResponseJob(null, false, "El id no existe");
+				return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//--Regresar respuesta
+			return new ResponseEntity<EntityJob>(this.entityJob, HttpStatus.INTERNAL_SERVER_ERROR);
+
+
+		} catch (Exception e) {
+			this.dtoResponseJob=new DtoResponseJob(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseJob>(this.dtoResponseJob, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		
+		
+		
+	}
 	
 	
 }
