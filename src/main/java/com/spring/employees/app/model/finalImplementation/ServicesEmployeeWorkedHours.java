@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import com.spring.employees.app.model.entitys.EntityEmployeeWorkedHours;
 import com.spring.employees.app.model.servicesJpaRepository.IServiceEmployeeWorkedHoursJpaRepository;
 
@@ -15,6 +16,7 @@ public class ServicesEmployeeWorkedHours implements IServicesEmployeeWorkedHours
 	//-- Variables globales
 	private EntityEmployeeWorkedHours entityEmployeeWorkedHours=null;
 	private List<EntityEmployeeWorkedHours> listEntityEmployeeWorkedHours=null;
+
 	
 	//--Servicios
 	@Autowired
@@ -50,6 +52,11 @@ public class ServicesEmployeeWorkedHours implements IServicesEmployeeWorkedHours
 			throws Exception {
 		this.entityEmployeeWorkedHours=this.serviceEmployeeWorkedHours.findByIdEmployeeAndWorkedDate(employeeId, fecha);
 		return this.entityEmployeeWorkedHours;
+	}
+
+	@Override
+	public Integer workedHours(Integer EmployeeId, LocalDate starDate, LocalDate endDate) throws Exception {
+		return this.serviceEmployeeWorkedHours.workedHours(EmployeeId, starDate, endDate);
 	}
 
 }

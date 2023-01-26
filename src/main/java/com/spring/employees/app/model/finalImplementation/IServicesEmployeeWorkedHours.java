@@ -14,6 +14,6 @@ public interface IServicesEmployeeWorkedHours {
 	public void deleteById(Integer id) throws Exception;
 	
 	public EntityEmployeeWorkedHours findByIdEmployeeAndWorkedDate(Integer employeeId, LocalDate fecha) throws Exception;
-	//public Integer workedHours(Integer EmployeeId, LocalDate starDate, LocalDate endDate)throws Exception;
+	public Integer workedHours(Integer EmployeeId, LocalDate starDate, LocalDate endDate)throws Exception;
 
 }

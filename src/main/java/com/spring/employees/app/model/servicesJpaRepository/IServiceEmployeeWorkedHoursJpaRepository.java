@@ -17,7 +17,7 @@ public interface IServiceEmployeeWorkedHoursJpaRepository extends JpaRepository<
 	
 	
 	/*Worked Hours: Contar las horas trabajadas de un cliente en un rango de fechas*/
-	@Query(value = "SELECT SUM(WORKED_HOURS) AS WorkedHours from employee_worked_hours WHERE id=:employeeId AND  WORKED_DATE BETWEEN :startDate AND :endDate", nativeQuery = true)
+	@Query(value = "SELECT SUM(WORKED_HOURS) AS workedHours from employee_worked_hours WHERE employee_id=:employeeId AND  WORKED_DATE BETWEEN :startDate AND :endDate", nativeQuery = true)
 	public Integer workedHours (@Param("employeeId") Integer employeeId, @Param("startDate") LocalDate startDate , @Param("endDate") LocalDate endDate);
 	
 

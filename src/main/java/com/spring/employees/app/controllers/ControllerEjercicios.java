@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import com.spring.employees.app.model.dtos.DtoRequestEmployeeIdStartDateEndDate;
 import com.spring.employees.app.model.dtos.DtoRequestJobId;
 import com.spring.employees.app.model.dtos.DtoResponseEmployee;
+import com.spring.employees.app.model.dtos.DtoResponseHoursSuccessMessage;
 import com.spring.employees.app.model.dtos.DtoResponseIdSuccessMessage;
 import com.spring.employees.app.model.entitys.EntityEmployee;
 import com.spring.employees.app.model.entitys.EntityEmployeeWorkedHours;
@@ -43,6 +46,8 @@ public class ControllerEjercicios {
 	private DtoResponseEmployee dtoResponseEmployee=null;
 	private DtoResponseIdSuccessMessage dtoResponseIdSuccessMessage;
 	private DtoRequestJobId dtoRequestJobId=null;
+	private DtoRequestEmployeeIdStartDateEndDate dtoRequestEmployeeIdStartDateEndDate=null;
+	private DtoResponseHoursSuccessMessage  dtoResponseHoursSuccessMessage=null;
 	
 	private EntityJob entityJob=null;
 	private EntityGender entityGender=null;
@@ -221,7 +226,7 @@ public class ControllerEjercicios {
 			
 			return new ResponseEntity< List<EntityEmployee> >(this.listEntityEmployee, HttpStatus.OK);
 			
-			//return null;
+			
 			
 		} catch (Exception e) {
 			this.dtoResponseEmployee=new DtoResponseEmployee(null, false, e.getMessage());
@@ -231,6 +236,50 @@ public class ControllerEjercicios {
 	}
 	
 	
+	//-- Calculate hours worked by an employee in a range of dates
+	@GetMapping(path = "worked/hours")
+	public ResponseEntity<?> calculateWorkedHours(@RequestBody(required = true) DtoRequestEmployeeIdStartDateEndDate dtoRequest){
+		
+		try {
+			
+			//-- Validar el request
+			if (dtoRequest==null
+				|| dtoRequest.getEmployeeId()==null 
+				|| dtoRequest.getEmployeeId()<0  
+				|| dtoRequest.getStartDate()==null
+				|| dtoRequest.getEndDate()==null) {
+				this.dtoResponseHoursSuccessMessage=new DtoResponseHoursSuccessMessage(null, false, "Asegurate de enviar todos los campos y que el employeeId sea mayor a 0");
+				return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.BAD_REQUEST);
+			}
+			
+			//-- Validar que la fecha de inicio no sea mayor a la fin
+			if (dtoRequest.getStartDate().isAfter(dtoRequest.getEndDate())) {
+				this.dtoResponseHoursSuccessMessage=new DtoResponseHoursSuccessMessage(null, false, "La fecha de inicio no puede ser mayor a la fecha de fin");
+				return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.BAD_REQUEST);
+			}
+			
+			//-- Validar que el empleado exista
+			this.entityEmployee=this.servicesEmployee.findById(dtoRequest.getEmployeeId());
+			if (this.entityEmployee==null) {
+				this.dtoResponseHoursSuccessMessage=new DtoResponseHoursSuccessMessage(null, false, "El empleado no existe");
+				return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//-- Consultar horas trabajadas		
+			Integer horasTrabajadas=this.servicesEmployeeWorkedHours.workedHours(dtoRequest.getEmployeeId(),dtoRequest.getStartDate() ,dtoRequest.getEndDate());			
+			if (horasTrabajadas==null) { horasTrabajadas=0;	}
+			
+			
+			//-- Regresar respuesta
+			this.dtoResponseHoursSuccessMessage=new DtoResponseHoursSuccessMessage(horasTrabajadas, true, null);
+			return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.OK);
+			
+
+		} catch (Exception e) {
+			this.dtoResponseHoursSuccessMessage=new DtoResponseHoursSuccessMessage(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	
 	
