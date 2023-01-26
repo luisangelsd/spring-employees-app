@@ -2,6 +2,8 @@ package com.spring.employees.app.model.entitys;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "jobs")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EntityJob implements Serializable{
 
 	@Id

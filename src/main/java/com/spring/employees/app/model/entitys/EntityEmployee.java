@@ -3,6 +3,10 @@ package com.spring.employees.app.model.entitys;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,17 +30,6 @@ public class EntityEmployee implements Serializable {
 	@SequenceGenerator(name = "S_ID_AUTO_INCREMENT_EMPLOYEES", initialValue = 1, allocationSize = 1)
 	private Integer id;
 	
-	
-	@ManyToOne( fetch = FetchType.LAZY)
-	@JoinColumn(name = "gender_id")
-	@NotNull(message = "El genderId no puede ser null")
-	private EntityGender genderId;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="job_id")
-	@NotNull(message = "El jobId no puede ser null")
-	private EntityJob jobId;
-	
 	@NotNull(message = "El name no puede ser null")
 	@NotEmpty(message = "El name no puede estar vacío")
 	@Column(unique = true)
@@ -49,6 +42,17 @@ public class EntityEmployee implements Serializable {
 	
 	@NotNull(message = "El birthdate no puede ser null")
 	private LocalDate birthdate;
+	
+	
+	@ManyToOne( fetch = FetchType.LAZY)
+	@JoinColumn(name = "gender_id")
+	@NotNull(message = "El genderId no puede ser null")
+	private EntityGender genderId;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="job_id")
+	@NotNull(message = "El jobId no puede ser null")
+	private EntityJob jobId;
 	
 	
 	

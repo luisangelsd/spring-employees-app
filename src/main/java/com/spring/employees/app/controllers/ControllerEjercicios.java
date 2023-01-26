@@ -9,11 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.employees.app.model.dtos.DtoRequestJobId;
 import com.spring.employees.app.model.dtos.DtoResponseEmployee;
 import com.spring.employees.app.model.dtos.DtoResponseIdSuccessMessage;
 import com.spring.employees.app.model.entitys.EntityEmployee;
@@ -35,14 +37,16 @@ public class ControllerEjercicios {
 
 	//-- Variables globales
 	private EntityEmployee entityEmployee=null;
-	private List<EntityEmployee> listEntityEmployee=null;
+	private List<EntityEmployee> listEntityEmployee;
 	private EntityEmployeeWorkedHours entityEmployeeWorkedHours=null;
 	
 	private DtoResponseEmployee dtoResponseEmployee=null;
-	private DtoResponseIdSuccessMessage dtoResponseIdSuccesMessage;
+	private DtoResponseIdSuccessMessage dtoResponseIdSuccessMessage;
+	private DtoRequestJobId dtoRequestJobId=null;
 	
 	private EntityJob entityJob=null;
 	private EntityGender entityGender=null;
+	
 	
 	
 	
@@ -175,8 +179,8 @@ public class ControllerEjercicios {
 			this.entityEmployeeWorkedHours=this.servicesEmployeeWorkedHours.saveUpdate(entityEmployeWorkedHours);
 			
 			//-- Devolver respuesta
-			this.dtoResponseIdSuccesMessage=new DtoResponseIdSuccessMessage(this.entityEmployee.getId(), true, null);
-			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccesMessage, HttpStatus.OK);
+			this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(this.entityEmployee.getId(), true, null);
+			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.OK);
 			
 			
 		} catch (Exception e) {
@@ -185,6 +189,49 @@ public class ControllerEjercicios {
 		}
 		
 	}
+	
+	
+	//-- Find Employees By JobId
+	@GetMapping("employees/job")
+	public ResponseEntity<?> hoursWorked(@RequestBody(required = true) DtoRequestJobId dtoRequestJobId) {
+		
+		try {
+			
+			//-- Validar request
+			if (dtoRequestJobId.getJobId()==null || dtoRequestJobId.getJobId()<0) {
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false,"El jobId es requerido y debe ser mayor a 0");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- validar que el puesto exista
+			this.entityJob=this.servicesJob.findById(dtoRequestJobId.getJobId());
+			if (this.entityJob==null) {
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false,"Lo sentimos, el jobId no existe");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			
+			//-- Realizar consulta
+			this.listEntityEmployee=this.servicesEmployee.findEmployeesByJobId(dtoRequestJobId.getJobId());			
+			if (this.listEntityEmployee.isEmpty()) {
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false,"No se han encontrado registros");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			return new ResponseEntity< List<EntityEmployee> >(this.listEntityEmployee, HttpStatus.OK);
+			
+			//return null;
+			
+		} catch (Exception e) {
+			this.dtoResponseEmployee=new DtoResponseEmployee(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	
+	
 	
 	
 }

@@ -60,7 +60,7 @@ public class ServicesEmployee implements IServicesEmployee {
 	@Override
 	public List<EntityEmployee> findEmployeesByJobId(Integer idJob) throws Exception {
 		this.listEntityEmployee=this.serviceEmployee.findEmployeesByJobId(idJob);
-		return null;
+		return this.listEntityEmployee;
 	}
 	
 

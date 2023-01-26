@@ -3,6 +3,8 @@ package com.spring.employees.app.model.entitys;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "employee_worked_hours")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EntityEmployeeWorkedHours implements Serializable{
 	
 	@Id
