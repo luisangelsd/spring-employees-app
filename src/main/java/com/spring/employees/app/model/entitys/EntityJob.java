@@ -41,6 +41,16 @@ public class EntityJob implements Serializable{
 	public Double getSalary() {	return salary;	}
 	public void setSalary(Double salary) {	this.salary = salary;}
 	
+	//-- Methods
+	public EntityJob(Integer id) {
+		this.id = id;
+	}
+	
+	public EntityJob() {
+		
+	}
+	
+	
 	
 
 	
