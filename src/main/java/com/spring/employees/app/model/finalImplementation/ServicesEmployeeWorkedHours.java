@@ -56,7 +56,12 @@ public class ServicesEmployeeWorkedHours implements IServicesEmployeeWorkedHours
 
 	@Override
 	public Integer workedHours(Integer EmployeeId, LocalDate starDate, LocalDate endDate) throws Exception {
-		return this.serviceEmployeeWorkedHours.workedHours(EmployeeId, starDate, endDate);
+		
+		Integer horasTrabjadas=this.serviceEmployeeWorkedHours.workedHours(EmployeeId, starDate, endDate);
+		if (horasTrabjadas==null) {
+			horasTrabjadas=0;
+		}
+		return horasTrabjadas;
 	}
 
 }

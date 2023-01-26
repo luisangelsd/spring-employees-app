@@ -21,6 +21,7 @@ import com.spring.employees.app.model.dtos.DtoRequestJobId;
 import com.spring.employees.app.model.dtos.DtoResponseEmployee;
 import com.spring.employees.app.model.dtos.DtoResponseHoursSuccessMessage;
 import com.spring.employees.app.model.dtos.DtoResponseIdSuccessMessage;
+import com.spring.employees.app.model.dtos.DtoResponsePaymenSuccessMessage;
 import com.spring.employees.app.model.entitys.EntityEmployee;
 import com.spring.employees.app.model.entitys.EntityEmployeeWorkedHours;
 import com.spring.employees.app.model.entitys.EntityGender;
@@ -48,6 +49,7 @@ public class ControllerEjercicios {
 	private DtoRequestJobId dtoRequestJobId=null;
 	private DtoRequestEmployeeIdStartDateEndDate dtoRequestEmployeeIdStartDateEndDate=null;
 	private DtoResponseHoursSuccessMessage  dtoResponseHoursSuccessMessage=null;
+	private DtoResponsePaymenSuccessMessage dtoResponsePaymenSuccessMessage=null;
 	
 	private EntityJob entityJob=null;
 	private EntityGender entityGender=null;
@@ -267,7 +269,7 @@ public class ControllerEjercicios {
 			
 			//-- Consultar horas trabajadas		
 			Integer horasTrabajadas=this.servicesEmployeeWorkedHours.workedHours(dtoRequest.getEmployeeId(),dtoRequest.getStartDate() ,dtoRequest.getEndDate());			
-			if (horasTrabajadas==null) { horasTrabajadas=0;	}
+			
 			
 			
 			//-- Regresar respuesta
@@ -280,6 +282,55 @@ public class ControllerEjercicios {
 			return new ResponseEntity<DtoResponseHoursSuccessMessage>(this.dtoResponseHoursSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	//--calculates how much an employee is paid in a range of dates
+	@GetMapping(path = "worked/payment")
+	public ResponseEntity<?> workedPayment(@RequestBody(required = true) DtoRequestEmployeeIdStartDateEndDate dtoRequest){
+		
+		try {
+			
+			//-- Validar request
+			if (dtoRequest.getEmployeeId()==null 
+				|| dtoRequest.getEmployeeId()<0
+				|| dtoRequest.getEndDate()==null
+				|| dtoRequest.getStartDate()==null) 
+				{
+					this.dtoResponsePaymenSuccessMessage=new DtoResponsePaymenSuccessMessage(null, false, "Asegurate de añadir todos los campos y que employeeId sea mayor a 0");
+					return new ResponseEntity<DtoResponsePaymenSuccessMessage>(this.dtoResponsePaymenSuccessMessage, HttpStatus.BAD_REQUEST);
+				}
+			
+			//-- Validar que la fecha inicio no sea mayor a la fecha fin
+				if (dtoRequest.getStartDate().isAfter(dtoRequest.getEndDate())) {
+					this.dtoResponsePaymenSuccessMessage=new DtoResponsePaymenSuccessMessage(null, false, "La fecha de inicio no puede ser mayor a la fecha de fin");
+					return new ResponseEntity<DtoResponsePaymenSuccessMessage>(this.dtoResponsePaymenSuccessMessage, HttpStatus.BAD_REQUEST);
+				}
+			
+			//-- Validar que el employee exista
+			this.entityEmployee=this.servicesEmployee.findById(dtoRequest.getEmployeeId());
+			if (this.entityEmployee==null) {
+				this.dtoResponsePaymenSuccessMessage=new DtoResponsePaymenSuccessMessage(null, false, "El employee no existe");
+				return new ResponseEntity<DtoResponsePaymenSuccessMessage>(this.dtoResponsePaymenSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+			//-- Obtener las horas trabajadas
+			Integer horasTrabajadas=this.servicesEmployeeWorkedHours.workedHours(dtoRequest.getEmployeeId(), dtoRequest.getStartDate(), dtoRequest.getEndDate());
+			
+			
+			//-- Obtener el salario del empleado
+			Double salario=this.servicesJob.findSalaryById(this.entityEmployee.getJobId().getId());
+			
+			
+			//-- Regresar respuesta
+			this.dtoResponsePaymenSuccessMessage=new DtoResponsePaymenSuccessMessage((horasTrabajadas*salario), true, null);
+			return new ResponseEntity<DtoResponsePaymenSuccessMessage>(this.dtoResponsePaymenSuccessMessage, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			this.dtoResponsePaymenSuccessMessage=new DtoResponsePaymenSuccessMessage(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponsePaymenSuccessMessage>(this.dtoResponsePaymenSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+		}  
+	}
+	
 	
 	
 	

@@ -47,4 +47,14 @@ public class ServicesJob implements IServicesJob {
 		
 	}
 
+
+	@Override
+	public Double findSalaryById(Integer id) throws Exception {
+		Double salario=this.serviceJob.findSalaryById(id);
+		if (salario==null) {
+			salario=0.0;
+		}
+		return salario;
+	}
+
 }
