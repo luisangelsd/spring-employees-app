@@ -46,8 +46,8 @@ public class ControllerEjercicios {
 	
 	private DtoResponseEmployee dtoResponseEmployee=null;
 	private DtoResponseIdSuccessMessage dtoResponseIdSuccessMessage;
-	private DtoRequestJobId dtoRequestJobId=null;
-	private DtoRequestEmployeeIdStartDateEndDate dtoRequestEmployeeIdStartDateEndDate=null;
+
+
 	private DtoResponseHoursSuccessMessage  dtoResponseHoursSuccessMessage=null;
 	private DtoResponsePaymenSuccessMessage dtoResponsePaymenSuccessMessage=null;
 	
