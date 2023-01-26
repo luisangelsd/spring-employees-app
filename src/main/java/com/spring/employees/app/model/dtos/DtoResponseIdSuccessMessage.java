@@ -1,7 +1,7 @@
 package com.spring.employees.app.model.dtos;
 
-
-public class DtoResponseEmployee {
+public class DtoResponseIdSuccessMessage {
+	
 	
 	private Integer id;
 	private Boolean success;
@@ -19,18 +19,14 @@ public class DtoResponseEmployee {
 	
 	//-- Methos
 	
-	public DtoResponseEmployee(Integer id, Boolean success, String message) {
+	public DtoResponseIdSuccessMessage(Integer id, Boolean success, String message) {
 		this.id = id;
 		this.success = success;
 		this.message = message;
 	}
 		
-	public DtoResponseEmployee() {
+	public DtoResponseIdSuccessMessage() {
 	}
-	
-	
-	
-	
 	
 
 }
