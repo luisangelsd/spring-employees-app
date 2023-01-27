@@ -23,8 +23,8 @@ import jakarta.validation.constraints.NotNull;
 public class EntityEmployeeWorkedHours implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "S_ID_AUTO_INCREMEN_EMPLOYEES_WORKED_HOURS")
-	@SequenceGenerator(name = "S_ID_AUTO_INCREMEN_EMPLOYEES_WORKED_HOURS", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "S_ID_AUTO_INCREMENT_EMPLOYEES_WORKED_HOURS")
+	@SequenceGenerator(name = "S_ID_AUTO_INCREMENT_EMPLOYEES_WORKED_HOURS", initialValue = 1, allocationSize = 1)
 	private Integer id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

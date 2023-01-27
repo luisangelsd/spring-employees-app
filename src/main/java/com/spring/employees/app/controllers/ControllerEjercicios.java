@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.employees.app.model.dtos.DtoRequestEmployeeIdStartDateEndDate;
 import com.spring.employees.app.model.dtos.DtoRequestJobId;
-import com.spring.employees.app.model.dtos.DtoResponseEmployee;
 import com.spring.employees.app.model.dtos.DtoResponseHoursSuccessMessage;
 import com.spring.employees.app.model.dtos.DtoResponseIdSuccessMessage;
 import com.spring.employees.app.model.dtos.DtoResponsePaymenSuccessMessage;
@@ -44,10 +43,7 @@ public class ControllerEjercicios {
 	private List<EntityEmployee> listEntityEmployee;
 	private EntityEmployeeWorkedHours entityEmployeeWorkedHours=null;
 	
-	private DtoResponseEmployee dtoResponseEmployee=null;
 	private DtoResponseIdSuccessMessage dtoResponseIdSuccessMessage;
-
-
 	private DtoResponseHoursSuccessMessage  dtoResponseHoursSuccessMessage=null;
 	private DtoResponsePaymenSuccessMessage dtoResponsePaymenSuccessMessage=null;
 	
@@ -87,42 +83,42 @@ public class ControllerEjercicios {
 			
 			//-- validar el request
 			if (result.hasErrors()) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "Asegurate de enviar todos los datos requeridos");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "Asegurate de enviar todos los datos requeridos");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//---- Validar que la fecha no sea mayor a la actual
 			if (entityEmployee.getBirthdate().isAfter(LocalDate.now())) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "La fecha Birthdate no puede ser mayor a la fecha actual");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "La fecha Birthdate no puede ser mayor a la fecha actual");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- validar si es mayor de edad
 			if (!this.servicesDate.esMayorDe18(entityEmployee.getBirthdate())) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "El employee no puede ser menor de 18 años");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "El employee no puede ser menor de 18 años");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- validar que el employee no exista
 			this.entityEmployee=this.servicesEmployee.findByNameAndLastName(entityEmployee.getLastName(), entityEmployee.getLastName());
 			if (this.entityEmployee!=null) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "El employee ya esta registrado");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "El employee ya esta registrado");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- validar que exista el job
 			this.entityJob=this.servicesJob.findById(entityEmployee.getJobId().getId());
 			if (this.entityJob==null) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "El jobId no existe");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "El jobId no existe");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			
 			//-- validar que exista el  gender
 			this.entityGender=this.servicesGender.findById(entityEmployee.getGenderId().getId());
 			if (this.entityGender==null) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null,false, "El genderId no existe");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null,false, "El genderId no existe");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			
@@ -132,13 +128,13 @@ public class ControllerEjercicios {
 			
 			
 			//-- Enviar respuesta
-			this.dtoResponseEmployee=new DtoResponseEmployee(this.entityEmployee.getId(), true, null);
-			return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.OK);
+			this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(this.entityEmployee.getId(), true, null);
+			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.OK);
 			
 			
 		} catch (Exception e) {
-			this.dtoResponseEmployee=new DtoResponseEmployee(null, false, e.getMessage());
-			return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+			this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -150,36 +146,36 @@ public class ControllerEjercicios {
 			
 			//-- Validar request
 			if (result.hasErrors()) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null, false, "Verifica que todos los campos esten completos y no agregar valores negativos");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, "Verifica que todos los campos esten completos y no agregar valores negativos");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			
 			
 			//--Validad que sean menos de 20 horas trabajadas
 			if (entityEmployeWorkedHours.getWorkedHours() > 20) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null, false, "No puedes registrar más de 20 horas");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, "No puedes registrar más de 20 horas");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- Validar que no se puedan registrar horas en fechas futuras
 			if (entityEmployeWorkedHours.getWorkedDate().isAfter(LocalDate.now())) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null, false, "No puedes registrar horas para fechas futuras");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, "No puedes registrar horas para fechas futuras");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- Validar que el empleado exista
 			this.entityEmployee=this.servicesEmployee.findById(entityEmployeWorkedHours.getEmployeeId().getId());
 			if (this.entityEmployee==null) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null, false, "El employee no existe");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, "El employee no existe");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- No se pueden tener más de 2 registros 
 			this.entityEmployeeWorkedHours=this.servicesEmployeeWorkedHours.findByIdEmployeeAndWorkedDate(entityEmployeWorkedHours.getEmployeeId().getId(), entityEmployeWorkedHours.getWorkedDate());
 			if (this.entityEmployeeWorkedHours!=null) {
-				this.dtoResponseEmployee=new DtoResponseEmployee(null, false, "Ya registraste horas para esta fecha");
-				return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+				this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, "Ya registraste horas para esta fecha");
+				return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			
 			//-- Guardar
@@ -191,8 +187,8 @@ public class ControllerEjercicios {
 			
 			
 		} catch (Exception e) {
-			this.dtoResponseEmployee=new DtoResponseEmployee(null, false, e.getMessage());
-			return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+			this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	}
@@ -231,8 +227,8 @@ public class ControllerEjercicios {
 			
 			
 		} catch (Exception e) {
-			this.dtoResponseEmployee=new DtoResponseEmployee(null, false, e.getMessage());
-			return new ResponseEntity<DtoResponseEmployee>(this.dtoResponseEmployee, HttpStatus.INTERNAL_SERVER_ERROR);
+			this.dtoResponseIdSuccessMessage=new DtoResponseIdSuccessMessage(null, false, e.getMessage());
+			return new ResponseEntity<DtoResponseIdSuccessMessage>(this.dtoResponseIdSuccessMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	}
